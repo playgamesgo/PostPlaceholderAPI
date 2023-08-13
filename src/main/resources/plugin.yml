@@ -1,0 +1,7 @@
+name: PostPlaceholderAPI
+version: '${version}'
+main: me.playgamesgo.postplaceholderapi.PostPlaceholderAPI
+api-version: '1.19'
+author: playgamesgo
+description: PlaceholderAPI extension for http post requests
+depend: [PlaceholderAPI]
