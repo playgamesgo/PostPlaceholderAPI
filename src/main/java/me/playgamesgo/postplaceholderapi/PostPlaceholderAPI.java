@@ -1,39 +1,41 @@
 package me.playgamesgo.postplaceholderapi;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import de.leonhard.storage.Config;
+import de.leonhard.storage.internal.settings.ReloadSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public final class PostPlaceholderAPI extends JavaPlugin {
     PluginLogger logger = new PluginLogger(this);
     static Server server = Bukkit.getServer();
-    public static YamlDocument config;
+    public static Config config;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        try {
-            config = YamlDocument.create(new File(getDataFolder(), "config.yml"), getResource("config.yml"),
-                    GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        config = new Config("config.yml", getDataFolder().toString());
+        config.setReloadSettings(ReloadSettings.INTELLIGENT);
+
+        config.setDefault("port", 8000);
+        List<String> tokens = new ArrayList<>();
+        tokens.add(String.valueOf(UUID.randomUUID()));
+        tokens.add(String.valueOf(UUID.randomUUID()));
+        config.setDefault("tokens", tokens);
+
+        config.write();
+
         new HttpManager(logger);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        HttpManager.server.stop(1);
+        HttpManager.server.stop(0);
     }
 }

@@ -1,7 +1,0 @@
-# File version (do NOT edit):
-config-version: 1
-
-port: 8000
-
-tokens:
-  - "64c63442-7c54-4b9e-a08e-6520c5e001a8"
